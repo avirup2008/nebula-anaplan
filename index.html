@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nebula — EyeOn Anaplan Accelerator Suite</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:#FAF8F0; --bg2:#F2EFE8; --surface:#FFFDF8; --surface2:#F5F2EA; --surface3:#EBE8E0;
+      --text:#1C2129; --text2:#595E6B; --text3:#9EA1AB; --text4:#B8BABE;
+      --accent:#175AA6; --accent2:#3B7FC4;
+      --gold:#BF801E; --gold-pale:rgba(191,128,30,0.10); --gold-bd:rgba(191,128,30,0.28);
+      --pos:#217348; --pos-pale:rgba(33,115,72,0.09); --pos-bd:rgba(33,115,72,0.22);
+      --neg:#B82E2E; --border:rgba(28,33,41,0.08); --border2:rgba(28,33,41,0.12); --rule:#DED9CF;
+      --shadow-sm:0 1px 3px rgba(28,33,41,0.06),0 1px 2px rgba(28,33,41,0.04);
+      --shadow:0 4px 16px rgba(28,33,41,0.08),0 2px 6px rgba(28,33,41,0.05);
+      --shadow-lg:0 12px 40px rgba(28,33,41,0.10),0 4px 12px rgba(28,33,41,0.06);
+      --radius:10px; --radius-lg:14px; --radius-xl:20px;
+      --d-demand:#C8733A; --d-supply:#2E8B57; --d-finance:#175AA6; --d-data:#1A7F8A; --d-gov:#7047A3;
+    }
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden}
+
+    /* HERO — warm two-column */
+    .hero{position:relative}
+    .hero-body{display:grid;grid-template-columns:2fr 3fr}
+
+    /* Left column: illustration */
+    .hero-left{background:var(--bg);padding:160px 24px 80px 24px;overflow:hidden}
+
+    /* Visual card stack */
+    .vc-stack{display:flex;flex-direction:column;width:100%;max-width:360px;margin:0 auto}
+    .vc-card{background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:13px 15px;position:relative;overflow:hidden;box-shadow:var(--shadow-sm)}
+    .vc-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2.5px;background:var(--vc-nc)}
+    .vc-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px}
+    .vc-name{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;color:var(--vc-nc);letter-spacing:.08em}
+    .vc-phase{font-family:'IBM Plex Mono',monospace;font-size:7px;color:var(--text3);letter-spacing:.12em;text-transform:uppercase}
+    .vc-lbl{font-size:10px;color:var(--text3);margin-bottom:5px}
+    .vc-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+    .vc-bar{flex:1;height:3px;background:var(--bg2);border-radius:2px;overflow:hidden}
+    .vc-bar-fill{height:100%;border-radius:2px;background:var(--vc-nc)}
+    .vc-bar-n{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;color:var(--text);min-width:22px;text-align:right}
+    .vc-sub{font-size:9px;color:var(--text3)}
+    .vc-verdict{display:inline-flex;align-items:center;font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--vc-nc);background:var(--vc-nc-pale);border:1px solid var(--vc-nc-bd);border-radius:4px;padding:2px 7px;margin-top:6px}
+    .vc-connector{height:18px;display:flex;align-items:center;justify-content:center;position:relative}
+    .vc-connector::before{content:'';position:absolute;top:0;left:50%;width:1px;height:100%;background:linear-gradient(to bottom,var(--border2),var(--border));transform:translateX(-50%)}
+    .vc-connector::after{content:'▾';position:absolute;bottom:-2px;left:50%;transform:translateX(-50%);font-size:8px;color:var(--text4);line-height:1}
+    .vc-selenis{margin-top:10px;background:rgba(26,127,138,0.06);border:1px solid rgba(26,127,138,0.18);border-radius:var(--radius);padding:9px 13px;display:flex;align-items:center;gap:9px}
+    .vc-sel-pulse{width:6px;height:6px;border-radius:50%;background:#1A7F8A;flex-shrink:0;animation:pulse 2s ease-in-out infinite}
+    .vc-sel-txt{font-family:'IBM Plex Mono',monospace;font-size:8px;color:#1A7F8A;letter-spacing:.09em;text-transform:uppercase;line-height:1.45}
+    .vc-orion    {--vc-nc:#175AA6;--vc-nc-pale:rgba(23,90,166,.07);--vc-nc-bd:rgba(23,90,166,.20)}
+    .vc-atlas    {--vc-nc:#175AA6;--vc-nc-pale:rgba(23,90,166,.07);--vc-nc-bd:rgba(23,90,166,.20)}
+    .vc-nova     {--vc-nc:#217348;--vc-nc-pale:rgba(33,115,72,.07);--vc-nc-bd:rgba(33,115,72,.22)}
+    .vc-meridian {--vc-nc:#7047A3;--vc-nc-pale:rgba(112,71,163,.07);--vc-nc-bd:rgba(112,71,163,.20)}
+
+    /* Right column: text */
+    .hero-right{padding:160px 64px 80px 80px;background:var(--bg)}
+    .hero-right-inner{max-width:560px;width:100%}
+
+    /* Nav — warm tones */
+    .hero-nav{position:absolute;top:0;left:0;right:0;z-index:20;padding:26px 48px;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(to bottom,rgba(242,239,232,0.97) 0%,rgba(242,239,232,0) 100%)}
+    .hero-nav-brand{display:flex;align-items:center;gap:11px}
+    .hero-nav-name{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;color:var(--text);letter-spacing:.10em}
+    .hero-nav-byline{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:.14em;text-transform:uppercase;margin-top:2px}
+    .hero-pill{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;color:var(--text3);text-transform:uppercase}
+
+    /* Hero content */
+    .hero-eyebrow{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--text3);border-bottom:1.5px solid var(--gold);padding-bottom:7px;margin-bottom:18px}
+    .hero-product-badge{display:inline-flex;align-items:center;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);border:1px solid var(--gold-bd);border-radius:20px;padding:3px 12px;margin-bottom:12px}
+    .hero-title{font-family:'IBM Plex Sans',sans-serif;font-size:clamp(36px,3.6vw,54px);font-weight:700;color:var(--text);letter-spacing:-.02em;line-height:1.10;margin-bottom:20px}
+    .hero-title-accent{color:var(--gold);font-style:normal;display:block}
+    .hero-tagline{font-size:14px;font-weight:300;color:var(--text2);line-height:1.72;margin-bottom:28px;letter-spacing:.01em}
+    .hero-tagline em{font-style:italic;color:var(--text);font-weight:400}
+
+    .hero-stats{display:flex;align-items:stretch;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:4px;margin-bottom:24px;width:fit-content}
+    .hero-stat{padding:16px 28px;text-align:center}
+    .hero-stat+.hero-stat{border-left:1px solid var(--border)}
+    .hero-stat-n{display:block;font-family:'IBM Plex Mono',monospace;font-size:24px;font-weight:600;color:var(--text);line-height:1}
+    .hero-stat-label{display:block;font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--text3);margin-top:6px}
+
+    .hero-cta{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:15px 24px;border-radius:var(--radius);background:var(--accent);border:none;color:#fff;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;text-decoration:none;transition:all .22s ease;box-shadow:0 2px 8px rgba(23,90,166,0.22)}
+    .hero-cta:hover{background:var(--accent2);transform:translateY(-2px);box-shadow:0 8px 24px rgba(23,90,166,0.30)}
+
+    .hero-divider{height:1px;background:var(--rule);margin:18px 0}
+    .hero-footer-row{display:flex;align-items:center;justify-content:space-between}
+    .hero-footer-txt{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text4)}
+
+    /* ECOSYSTEM */
+    .ecosystem{background:var(--bg);padding:16px 72px 96px}
+    .section-header{text-align:center;max-width:640px;margin:0 auto 48px}
+    .section-eyebrow{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--text3);border-bottom:1.5px solid var(--gold);padding-bottom:7px;margin-bottom:20px}
+    .section-title{font-size:30px;font-weight:600;color:var(--text);line-height:1.25;margin-bottom:14px}
+    .section-sub{font-size:14px;font-weight:400;color:var(--text2);line-height:1.72}
+
+    /* DIAGRAM */
+    .diagram{max-width:1180px;margin:0 auto}
+
+    .phase-track{display:grid;grid-template-columns:1fr 68px 1fr 68px 1fr 68px 1fr;margin-bottom:10px}
+    .phase-cell{padding:0 6px}
+    .phase-tag{display:flex;align-items:center;gap:7px;padding-bottom:10px;border-bottom:1.5px solid var(--rule)}
+    .phase-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+    .phase-name{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--text3)}
+
+    .pipeline-row{display:grid;grid-template-columns:1fr 68px 1fr 68px 1fr 68px 1fr;align-items:start}
+
+    /* TOOL NODE */
+    .tool-node{background:var(--surface);border:1.5px solid var(--border2);border-radius:var(--radius-xl);padding:26px 22px 22px;display:flex;flex-direction:column;position:relative;overflow:hidden;
+      transition:transform .28s cubic-bezier(.34,1.2,.64,1),box-shadow .28s ease,border-color .20s ease;box-shadow:var(--shadow);cursor:default}
+    .tool-node::before{content:'';position:absolute;top:0;left:22px;right:22px;height:2.5px;background:var(--nc);border-radius:0 0 3px 3px}
+    .tool-node::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 50% at 50% 0%,var(--nc-glow),transparent 70%);opacity:0;transition:opacity .28s ease;pointer-events:none;border-radius:var(--radius-xl)}
+    .tool-node:hover{transform:translateY(-7px);border-color:var(--nc);box-shadow:0 24px 56px rgba(28,33,41,.13),0 4px 12px rgba(28,33,41,.07)}
+    .tool-node:hover::after{opacity:1}
+
+    .node-icon-wrap{width:40px;height:40px;border-radius:10px;background:var(--nc-pale);display:flex;align-items:center;justify-content:center;margin-bottom:14px;flex-shrink:0}
+    .node-badge{display:inline-flex;align-items:center;font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--nc);background:var(--nc-pale);border:1px solid var(--nc-bd);border-radius:4px;padding:3px 7px;margin-bottom:10px;width:fit-content}
+    .node-name{font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:600;color:var(--text);letter-spacing:.05em;margin-bottom:3px}
+    .node-role{font-size:11px;font-weight:400;color:var(--text3);line-height:1.45;margin-bottom:14px}
+    .node-desc{font-size:12px;color:var(--text2);line-height:1.65;margin-bottom:16px;flex:1}
+    .node-output{background:var(--bg2);border-radius:var(--radius);padding:10px 12px;margin-bottom:16px}
+    .node-output-lbl{font-family:'IBM Plex Mono',monospace;font-size:7px;letter-spacing:.16em;text-transform:uppercase;color:var(--text3);margin-bottom:5px}
+    .node-output-val{font-size:11px;font-weight:500;color:var(--text);line-height:1.45}
+    .node-launch{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;padding:9px 14px;border-radius:var(--radius);border:1.5px solid var(--nc);background:transparent;color:var(--nc);font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:all .18s ease;text-decoration:none}
+    .node-launch:hover{background:var(--nc);color:#fff}
+
+    .t-orion    {--nc:#175AA6;--nc-pale:rgba(23,90,166,.07);--nc-bd:rgba(23,90,166,.20);--nc-glow:rgba(23,90,166,.05)}
+    .t-atlas    {--nc:#175AA6;--nc-pale:rgba(23,90,166,.07);--nc-bd:rgba(23,90,166,.20);--nc-glow:rgba(23,90,166,.05)}
+    .t-nova     {--nc:#217348;--nc-pale:rgba(33,115,72,.07);--nc-bd:rgba(33,115,72,.20);--nc-glow:rgba(33,115,72,.05)}
+    .t-meridian {--nc:#7047A3;--nc-pale:rgba(112,71,163,.07);--nc-bd:rgba(112,71,163,.20);--nc-glow:rgba(112,71,163,.05)}
+
+    /* ARROW COLUMNS */
+    .arrow-col{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:96px;gap:8px}
+    .flow-line{width:1px;height:28px;position:relative;overflow:hidden;background:var(--rule)}
+    .flow-line::after{content:'';position:absolute;top:-100%;left:0;width:100%;height:100%;background:linear-gradient(to bottom,transparent,var(--gold),transparent);animation:flowPulse 2.4s ease-in-out infinite}
+    @keyframes flowPulse{0%{top:-100%}100%{top:200%}}
+    .arrow-node{width:34px;height:34px;border-radius:50%;background:var(--bg);border:1.5px solid var(--rule);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .18s;position:relative;flex-shrink:0}
+    .arrow-node:hover{border-color:var(--gold);background:var(--gold-pale)}
+    .arrow-node:hover svg path{stroke:var(--gold)}
+    .arrow-lbl{font-family:'IBM Plex Mono',monospace;font-size:7px;letter-spacing:.10em;text-transform:uppercase;color:var(--text4);text-align:center;line-height:1.4;max-width:56px}
+    .flow-line-b{width:1px;height:16px;background:var(--rule)}
+
+    /* TOOLTIP */
+    .arrow-tooltip{position:absolute;bottom:calc(100% + 10px);left:50%;transform:translateX(-50%);background:var(--text);color:rgba(245,242,234,.88);font-family:'IBM Plex Sans',sans-serif;font-size:11px;line-height:1.55;padding:10px 14px;border-radius:var(--radius);width:210px;text-align:center;opacity:0;pointer-events:none;transition:opacity .18s;z-index:200;box-shadow:var(--shadow-lg)}
+    .arrow-tooltip strong{display:block;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.08em;color:var(--gold);margin-bottom:5px}
+    .arrow-tooltip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:var(--text)}
+    .arrow-node:hover .arrow-tooltip{opacity:1}
+
+    /* SELENIS */
+    .selenis-section{margin-top:30px}
+    .selenis-connectors{display:grid;grid-template-columns:1fr 68px 1fr 68px 1fr 68px 1fr;height:36px}
+    .conn-cell{display:flex;flex-direction:column;align-items:center;justify-content:flex-end}
+    .conn-line{width:1px;flex:1;background:linear-gradient(to bottom,rgba(26,127,138,0) 0%,rgba(26,127,138,.35) 100%)}
+    .conn-dot{width:5px;height:5px;border-radius:50%;background:rgba(26,127,138,.42);flex-shrink:0}
+
+    .selenis-bridge{display:grid;grid-template-columns:1fr 68px 1fr 68px 1fr 68px 1fr;align-items:center;margin-bottom:14px}
+    .bridge-seg{height:1.5px;background:repeating-linear-gradient(to right,rgba(26,127,138,.35) 0px,rgba(26,127,138,.35) 6px,transparent 6px,transparent 12px)}
+    .bridge-node{display:flex;align-items:center;justify-content:center}
+    .bridge-pip{width:6px;height:6px;border-radius:50%;background:rgba(26,127,138,.45)}
+
+    .selenis-card{background:var(--surface);border:1.5px solid rgba(26,127,138,.22);border-radius:var(--radius-xl);padding:22px 26px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:22px;box-shadow:var(--shadow);transition:all .22s ease;position:relative;overflow:hidden}
+    .selenis-card::before{content:'';position:absolute;top:0;left:22px;right:22px;height:2px;background:#1A7F8A;border-radius:0 0 3px 3px}
+    .selenis-card::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 50% 0%,rgba(26,127,138,.04),transparent 70%);pointer-events:none;transition:opacity .22s;opacity:0}
+    .selenis-card:hover{border-color:rgba(26,127,138,.45);box-shadow:var(--shadow-lg);transform:translateY(-3px)}
+    .selenis-card:hover::after{opacity:1}
+
+    .selenis-left{display:flex;align-items:center;gap:14px}
+    .selenis-icon-wrap{width:46px;height:46px;border-radius:13px;background:rgba(26,127,138,.10);border:1px solid rgba(26,127,138,.18);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .selenis-badge{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#1A7F8A;background:rgba(26,127,138,.08);border:1px solid rgba(26,127,138,.20);border-radius:4px;padding:2px 7px;margin-bottom:5px}
+    .selenis-name{font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:600;color:var(--text);letter-spacing:.05em}
+    .selenis-desc{font-size:13px;color:var(--text2);line-height:1.65}
+    .selenis-always{display:inline-flex;align-items:center;gap:7px;margin-top:8px;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.10em;color:#1A7F8A;text-transform:uppercase}
+    .selenis-pulse{width:6px;height:6px;border-radius:50%;background:#1A7F8A;flex-shrink:0;animation:pulse 2s ease-in-out infinite}
+    @keyframes pulse{0%,100%{opacity:.45;transform:scale(1);box-shadow:0 0 0 0 rgba(26,127,138,0)}50%{opacity:1;transform:scale(1.3);box-shadow:0 0 0 4px rgba(26,127,138,.15)}}
+    .selenis-launch{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;border-radius:var(--radius);border:1.5px solid #1A7F8A;background:transparent;color:#1A7F8A;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:all .18s;text-decoration:none;white-space:nowrap}
+    .selenis-launch:hover{background:#1A7F8A;color:#fff}
+
+    /* LEGEND */
+    .diagram-legend{display:flex;align-items:center;justify-content:center;gap:28px;margin-top:40px;padding-top:28px;border-top:1px solid var(--rule)}
+    .legend-item{display:flex;align-items:center;gap:8px;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text3)}
+    .legend-line{width:20px;height:1px;background:var(--rule)}
+    .legend-dashed{width:20px;height:1.5px;border-top:1.5px dashed rgba(26,127,138,.40)}
+
+    /* FOOTER */
+    .footer{background:#131820;padding:44px 72px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:40px}
+    .footer-name{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;color:rgba(245,242,234,.80);letter-spacing:.10em;margin-bottom:5px}
+    .footer-sub{font-family:'IBM Plex Mono',monospace;font-size:9px;color:rgba(245,242,234,.24);letter-spacing:.12em;text-transform:uppercase}
+    .footer-links{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap}
+    .footer-link{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.10em;text-transform:uppercase;color:rgba(245,242,234,.30);text-decoration:none;transition:color .15s;padding:5px 10px;border-radius:5px}
+    .footer-link:hover{color:rgba(245,242,234,.70);background:rgba(255,255,255,.04)}
+    .footer-sep{color:rgba(245,242,234,.12);font-family:'IBM Plex Mono',monospace;font-size:10px}
+    .footer-copy{font-family:'IBM Plex Mono',monospace;font-size:9px;color:rgba(245,242,234,.18);letter-spacing:.10em;text-align:right}
+  </style>
+</head>
+<body>
+
+<section class="hero">
+  <nav class="hero-nav">
+    <div class="hero-nav-brand">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" style="flex-shrink:0">
+        <circle cx="12" cy="12" r="2.2" fill="rgba(28,33,41,0.62)"/>
+        <circle cx="5"  cy="8"  r="1.3" fill="rgba(28,33,41,0.35)"/>
+        <circle cx="19" cy="7"  r="1.0" fill="rgba(28,33,41,0.30)"/>
+        <circle cx="7"  cy="18" r="1.0" fill="rgba(28,33,41,0.25)"/>
+        <circle cx="18" cy="17" r="1.4" fill="rgba(28,33,41,0.32)"/>
+        <circle cx="12" cy="3"  r="0.8" fill="rgba(28,33,41,0.42)"/>
+        <line x1="12" y1="12" x2="5"  y2="8"  stroke="rgba(28,33,41,0.10)" stroke-width="0.7"/>
+        <line x1="12" y1="12" x2="19" y2="7"  stroke="rgba(28,33,41,0.10)" stroke-width="0.7"/>
+        <line x1="12" y1="12" x2="7"  y2="18" stroke="rgba(28,33,41,0.10)" stroke-width="0.7"/>
+        <line x1="12" y1="12" x2="18" y2="17" stroke="rgba(28,33,41,0.10)" stroke-width="0.7"/>
+        <line x1="12" y1="12" x2="12" y2="3"  stroke="rgba(28,33,41,0.10)" stroke-width="0.7"/>
+      </svg>
+      <div>
+        <div class="hero-nav-name">NEBULA</div>
+        <div class="hero-nav-byline">EyeOn · Anaplan Accelerator Suite</div>
+      </div>
+    </div>
+    <span class="hero-pill">5 Tools · 4 Phases · 1 Ecosystem</span>
+  </nav>
+
+  <div class="hero-body">
+
+    <!-- Left: Tool output card stack -->
+    <div class="hero-left">
+      <div class="vc-stack">
+
+        <!-- ORION output -->
+        <div class="vc-card vc-orion">
+          <div class="vc-head">
+            <span class="vc-name">ORION</span>
+            <span class="vc-phase">Pre-Sales</span>
+          </div>
+          <div class="vc-lbl">Planning Maturity Index</div>
+          <div class="vc-bar-row">
+            <div class="vc-bar"><div class="vc-bar-fill" style="width:73%"></div></div>
+            <span class="vc-bar-n">73</span>
+          </div>
+          <div class="vc-sub">Stage 3 · Defined</div>
+          <span class="vc-verdict">✓ Recommended</span>
+        </div>
+
+        <div class="vc-connector"></div>
+
+        <!-- ATLAS output -->
+        <div class="vc-card vc-atlas">
+          <div class="vc-head">
+            <span class="vc-name">ATLAS</span>
+            <span class="vc-phase">Architecture</span>
+          </div>
+          <div class="vc-lbl">Architecture Blueprint</div>
+          <span class="vc-verdict">Hybrid · 6 modules recommended</span>
+        </div>
+
+        <div class="vc-connector"></div>
+
+        <!-- NOVA output -->
+        <div class="vc-card vc-nova">
+          <div class="vc-head">
+            <span class="vc-name">NOVA</span>
+            <span class="vc-phase">Go-Live</span>
+          </div>
+          <div class="vc-lbl">Readiness Scorecard</div>
+          <span class="vc-verdict">GO · 94% ready · 2 conditions</span>
+        </div>
+
+        <div class="vc-connector"></div>
+
+        <!-- MERIDIAN output -->
+        <div class="vc-card vc-meridian">
+          <div class="vc-head">
+            <span class="vc-name">MERIDIAN</span>
+            <span class="vc-phase">Post-Live</span>
+          </div>
+          <div class="vc-lbl">Platform Health Score</div>
+          <span class="vc-verdict">89/100 · Active Governance</span>
+        </div>
+
+        <!-- Selenis always-on strip -->
+        <div class="vc-selenis">
+          <div class="vc-sel-pulse"></div>
+          <span class="vc-sel-txt">Selenis — Knowledge layer<br>available at every phase</span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Right: text content -->
+    <div class="hero-right">
+      <div class="hero-right-inner">
+        <h1 class="hero-title">
+          Your Anaplan journey,
+          <span class="hero-title-accent">fully orchestrated.</span>
+        </h1>
+        <p class="hero-tagline">
+          Five connected tools covering every phase of your Anaplan engagement — from pre-sales maturity assessment through architecture blueprinting, go-live readiness, and sustained platform governance. Structured data flows between each tool, eliminating duplicate discovery at every handoff.
+        </p>
+        <div class="hero-stats">
+          <div class="hero-stat"><span class="hero-stat-n">5</span><span class="hero-stat-label">Tools</span></div>
+          <div class="hero-stat"><span class="hero-stat-n">4</span><span class="hero-stat-label">Phases</span></div>
+          <div class="hero-stat"><span class="hero-stat-n">01</span><span class="hero-stat-label">Ecosystem</span></div>
+          <div class="hero-stat"><span class="hero-stat-n">∞</span><span class="hero-stat-label">Knowledge</span></div>
+        </div>
+        <a class="hero-cta" href="#ecosystem">
+          Explore the ecosystem
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M7 3v8M3.5 8.5L7 12l3.5-3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+        <div class="hero-divider"></div>
+        <div class="hero-footer-row">
+          <span class="hero-footer-txt">Gartner S&amp;OP Model · The Anaplan Way · Oliver Wight IBP · BARC Planning Survey 2025</span>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /hero-body -->
+</section>
+
+<section class="ecosystem" id="ecosystem">
+  <div class="section-header">
+    <p class="section-eyebrow">The Engagement Ecosystem</p>
+    <h2 class="section-title">From first discovery to<br>sustained platform health</h2>
+    <p class="section-sub">Each tool serves a distinct phase of the Anaplan engagement lifecycle. Assessment data flows forward — Orion's findings inform Atlas's architecture, Atlas's blueprint shapes Nova's readiness criteria, and Nova's sign-off activates Meridian's governance. Selenis is the persistent knowledge layer, available at every phase.</p>
+  </div>
+
+  <div class="diagram">
+
+    <div class="phase-track">
+      <div class="phase-cell"><div class="phase-tag"><div class="phase-dot" style="background:#175AA6"></div><span class="phase-name">Pre-Sales</span></div></div>
+      <div class="phase-cell"></div>
+      <div class="phase-cell"><div class="phase-tag"><div class="phase-dot" style="background:#175AA6"></div><span class="phase-name">Architecture</span></div></div>
+      <div class="phase-cell"></div>
+      <div class="phase-cell"><div class="phase-tag"><div class="phase-dot" style="background:#217348"></div><span class="phase-name">Go-Live</span></div></div>
+      <div class="phase-cell"></div>
+      <div class="phase-cell"><div class="phase-tag"><div class="phase-dot" style="background:#7047A3"></div><span class="phase-name">Post-Live</span></div></div>
+    </div>
+
+    <div class="pipeline-row">
+
+      <!-- ORION -->
+      <div class="tool-node t-orion">
+        <div class="node-icon-wrap">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <circle cx="10" cy="10" r="7" stroke="#175AA6" stroke-width="1.5"/>
+            <circle cx="10" cy="10" r="2.5" fill="#175AA6"/>
+            <line x1="10" y1="1.5" x2="10" y2="4.5"  stroke="#175AA6" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="10" y1="15.5" x2="10" y2="18.5" stroke="#175AA6" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="1.5" y1="10" x2="4.5" y2="10"   stroke="#175AA6" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="15.5" y1="10" x2="18.5" y2="10" stroke="#175AA6" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <span class="node-badge">Pre-Sales</span>
+        <div class="node-name">ORION</div>
+        <div class="node-role">Planning Maturity &amp; Anaplan Fit Assessment</div>
+        <div class="node-desc">15-question diagnostic across five planning dimensions. Produces a Planning Maturity Index, Gartner stage band, and a clear Anaplan fit verdict — with hard-blocker detection and a machine-readable PDF handoff to Atlas.</div>
+        <div class="node-output">
+          <div class="node-output-lbl">Output</div>
+          <div class="node-output-val">PMI score · Gartner stage · Fit verdict · Implementation roadmap · Atlas-ready PDF</div>
+        </div>
+        <a class="node-launch" href="https://orion-anaplan.vercel.app" target="_blank">
+          Launch Orion
+          <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1.5 9.5L9.5 1.5M9.5 1.5H3.5M9.5 1.5V7.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+
+      <!-- Arrow 1 -->
+      <div class="arrow-col">
+        <div class="flow-line"></div>
+        <div class="arrow-node">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M2.5 7H11.5M11.5 7L7.5 3M11.5 7L7.5 11" stroke="#9EA1AB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <div class="arrow-tooltip">
+            <strong>Assessment Handoff</strong>
+            PMI, dimension scores, and 7 pre-answered questions flow to Atlas via a structured PDF payload — no duplicate discovery.
+          </div>
+        </div>
+        <div class="arrow-lbl">PDF<br>Handoff</div>
+        <div class="flow-line-b"></div>
+      </div>
+
+      <!-- ATLAS -->
+      <div class="tool-node t-atlas">
+        <div class="node-icon-wrap">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M10 2.5L17.5 16.5H2.5L10 2.5Z" stroke="#175AA6" stroke-width="1.5" stroke-linejoin="round" fill="#175AA6" fill-opacity="0.10"/>
+            <line x1="10" y1="8" x2="10" y2="13" stroke="#175AA6" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <span class="node-badge">Architecture</span>
+        <div class="node-name">ATLAS</div>
+        <div class="node-role">Anaplan Architecture Blueprint</div>
+        <div class="node-desc">15-question architecture assessment. Ingests the Orion PDF to skip pre-answered questions. Evaluates planning scope, technical landscape, and organisational constraints to produce a full architecture blueprint with build rationale.</div>
+        <div class="node-output">
+          <div class="node-output-lbl">Output</div>
+          <div class="node-output-val">App / Custom / Hybrid verdict · Architecture rationale · Build recommendations</div>
+        </div>
+        <a class="node-launch" href="https://atlas-anaplan.vercel.app" target="_blank">
+          Launch Atlas
+          <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1.5 9.5L9.5 1.5M9.5 1.5H3.5M9.5 1.5V7.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+
+      <!-- Arrow 2 -->
+      <div class="arrow-col">
+        <div class="flow-line"></div>
+        <div class="arrow-node">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M2.5 7H11.5M11.5 7L7.5 3M11.5 7L7.5 11" stroke="#9EA1AB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <div class="arrow-tooltip">
+            <strong>Architecture Context</strong>
+            Atlas's build verdict defines what 'ready to go live' means — informing Nova's hard-blocker criteria and readiness dimensions.
+          </div>
+        </div>
+        <div class="arrow-lbl">Blueprint<br>Context</div>
+        <div class="flow-line-b"></div>
+      </div>
+
+      <!-- NOVA -->
+      <div class="tool-node t-nova">
+        <div class="node-icon-wrap">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M10 2L18.5 17H1.5L10 2Z" stroke="#217348" stroke-width="1.5" stroke-linejoin="round" fill="#217348" fill-opacity="0.08"/>
+            <line x1="10" y1="8.5" x2="10" y2="12.5" stroke="#217348" stroke-width="1.8" stroke-linecap="round"/>
+            <circle cx="10" cy="14.5" r="0.9" fill="#217348"/>
+          </svg>
+        </div>
+        <span class="node-badge" style="color:#217348;background:rgba(33,115,72,.08);border-color:rgba(33,115,72,.20)">Go-Live</span>
+        <div class="node-name">NOVA</div>
+        <div class="node-role">Go-Live Readiness Scorecard</div>
+        <div class="node-desc">20-question readiness diagnostic across five dimensions. Run jointly by EyeOn and the client before any Anaplan go-live. Nine hard blockers can trigger an automatic No Go — protecting both parties from a premature launch.</div>
+        <div class="node-output">
+          <div class="node-output-lbl">Output</div>
+          <div class="node-output-val">GO · GO WITH RISKS · NO GO · Blocker register · Steering committee report</div>
+        </div>
+        <a class="node-launch" href="https://nova-anaplan.vercel.app" target="_blank" style="border-color:#217348;color:#217348">
+          Launch Nova
+          <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1.5 9.5L9.5 1.5M9.5 1.5H3.5M9.5 1.5V7.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+
+      <!-- Arrow 3 -->
+      <div class="arrow-col">
+        <div class="flow-line"></div>
+        <div class="arrow-node">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M2.5 7H11.5M11.5 7L7.5 3M11.5 7L7.5 11" stroke="#9EA1AB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <div class="arrow-tooltip">
+            <strong>Go-Live Transition</strong>
+            A confirmed GO verdict from Nova marks the trigger for Meridian's governance and platform health monitoring to begin.
+          </div>
+        </div>
+        <div class="arrow-lbl">GO<br>Verdict</div>
+        <div class="flow-line-b"></div>
+      </div>
+
+      <!-- MERIDIAN -->
+      <div class="tool-node t-meridian">
+        <div class="node-icon-wrap">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <circle cx="10" cy="10" r="7.5" stroke="#7047A3" stroke-width="1.5"/>
+            <path d="M10 4.5V10L13.5 13.5" stroke="#7047A3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="10" cy="10" r="1.5" fill="#7047A3"/>
+          </svg>
+        </div>
+        <span class="node-badge" style="color:#7047A3;background:rgba(112,71,163,.08);border-color:rgba(112,71,163,.20)">Post-Live</span>
+        <div class="node-name">MERIDIAN</div>
+        <div class="node-role">Post-Go-Live Governance &amp; Platform Health</div>
+        <div class="node-desc">Ongoing governance and health monitoring for live Anaplan environments. Tracks platform performance, adoption, process adherence, and model quality — turning a completed deployment into a sustained, governed programme.</div>
+        <div class="node-output">
+          <div class="node-output-lbl">Output</div>
+          <div class="node-output-val">Health scorecard · Governance dashboard · Adoption metrics · Action register</div>
+        </div>
+        <a class="node-launch" href="https://meridian-anaplan.vercel.app" target="_blank" style="border-color:#7047A3;color:#7047A3">
+          Launch Meridian
+          <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1.5 9.5L9.5 1.5M9.5 1.5H3.5M9.5 1.5V7.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+
+    </div><!-- /pipeline-row -->
+
+    <!-- SELENIS LAYER -->
+    <div class="selenis-section">
+      <div class="selenis-connectors">
+        <div class="conn-cell"><div class="conn-line"></div><div class="conn-dot"></div></div>
+        <div></div>
+        <div class="conn-cell"><div class="conn-line"></div><div class="conn-dot"></div></div>
+        <div></div>
+        <div class="conn-cell"><div class="conn-line"></div><div class="conn-dot"></div></div>
+        <div></div>
+        <div class="conn-cell"><div class="conn-line"></div><div class="conn-dot"></div></div>
+      </div>
+      <div class="selenis-bridge">
+        <div class="bridge-seg"></div><div class="bridge-node"><div class="bridge-pip"></div></div>
+        <div class="bridge-seg"></div><div class="bridge-node"><div class="bridge-pip"></div></div>
+        <div class="bridge-seg"></div><div class="bridge-node"><div class="bridge-pip"></div></div>
+        <div class="bridge-seg"></div>
+      </div>
+      <div class="selenis-card">
+        <div class="selenis-left">
+          <div class="selenis-icon-wrap">
+            <svg width="22" height="22" viewBox="0 0 18 18" fill="none">
+              <path d="M9 1v4M9 13v4M1 9h4M13 9h4M3.6 3.6l2.8 2.8M11.6 11.6l2.8 2.8M14.4 3.6l-2.8 2.8M6.4 11.6l-2.8 2.8" stroke="#1A7F8A" stroke-width="1.8" stroke-linecap="round"/>
+              <circle cx="9" cy="9" r="2.5" fill="#1A7F8A"/>
+            </svg>
+          </div>
+          <div>
+            <div class="selenis-badge">Knowledge Layer</div>
+            <div class="selenis-name">SELENIS</div>
+          </div>
+        </div>
+        <div>
+          <div class="selenis-desc">Anaplan knowledge assistant, available at every phase of the engagement. Ask about Planual, Anapedia, model architecture, the Applications portfolio, integration patterns, or EyeOn methodology — answered in depth, in context.</div>
+          <div class="selenis-always"><div class="selenis-pulse"></div>Persistent across all phases · Always accessible</div>
+        </div>
+        <div>
+          <a class="selenis-launch" href="https://selenis-anaplan.vercel.app" target="_blank">
+            Ask Selenis
+            <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1.5 9.5L9.5 1.5M9.5 1.5H3.5M9.5 1.5V7.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Legend -->
+    <div class="diagram-legend">
+      <div class="legend-item"><div class="legend-line"></div><svg width="8" height="10" viewBox="0 0 8 10" fill="none"><path d="M1 1L7 5L1 9" stroke="#9EA1AB" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Sequential handoff</div>
+      <div class="legend-item"><div class="legend-dashed"></div>Knowledge access</div>
+      <div class="legend-item"><div style="width:6px;height:6px;border-radius:50%;background:rgba(26,127,138,.45)"></div>Connection point</div>
+      <div class="legend-item"><div style="width:6px;height:6px;border-radius:50%;border:1.5px solid var(--gold);background:var(--gold-pale)"></div>Hover arrows for handoff detail</div>
+    </div>
+
+  </div>
+</section>
+
+<footer class="footer">
+  <div>
+    <div class="footer-name">NEBULA</div>
+    <div class="footer-sub">EyeOn · Anaplan Accelerator Suite · Five tools · One journey</div>
+  </div>
+  <div class="footer-links">
+    <a class="footer-link" href="https://orion-anaplan.vercel.app" target="_blank">Orion</a><span class="footer-sep">·</span>
+    <a class="footer-link" href="https://atlas-anaplan.vercel.app" target="_blank">Atlas</a><span class="footer-sep">·</span>
+    <a class="footer-link" href="https://nova-anaplan.vercel.app" target="_blank">Nova</a><span class="footer-sep">·</span>
+    <a class="footer-link" href="https://meridian-anaplan.vercel.app" target="_blank">Meridian</a><span class="footer-sep">·</span>
+    <a class="footer-link" href="https://selenis-anaplan.vercel.app" target="_blank">Selenis</a>
+  </div>
+  <div class="footer-copy">© 2025 EyeOn</div>
+</footer>
+
+</body>
+</html>
